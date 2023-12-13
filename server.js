@@ -289,7 +289,8 @@ async function deleteEmployee() {
         const { employeeToDelete } = await inquirer.prompt([
             {
                 type: 'list',
-                message: `***CAUTION ALL EMPLOYEE INFORMATION IS DELETED IMMEDIATELY AFTER SELECTION*** If you're sure you'd like to move forward, select the employee you'd like to delete:`,
+                message: `!!!CAUTION ALL EMPLOYEE INFORMATION IS DELETED IMMEDIATELY!!!
+                 If you're sure you'd like to move forward, select the employee you'd like to delete:`,
                 name: 'employeeToDelete',
                 choices: employees,
             },
@@ -315,7 +316,7 @@ async function deleteRoles() {
             {
                 type: 'list',
                 message: `!!!You need to delete or change employee roles connected to this department before you can do this!!!
-***CAUTION ALL ROLE INFORMATION IS DELETED IMMEDIATELY AFTER SELECTION*** 
+!!!CAUTION ALL ROLE INFORMATION IS DELETED IMMEDIATELY!!!
 If you're sure you'd like to move forward, select the role you'd like to delete:`,
                 name: 'RoleToDelete',
                 choices: Roles,
@@ -342,7 +343,7 @@ async function deleteDepartments() {
             {
                 type: 'list',
                 message: `!!!You need to change or delete employees and roles connected to this department before you can do this!!!
-***CAUTION ALL DAPARTMENT INFORMATION IS DELETED IMMEDIATELY AFTER SELECTION***
+!!!CAUTION ALL DAPARTMENT INFORMATION IS DELETED IMMEDIATELY!!!
 If you're sure you'd like to move forward, select the department you'd like to delete:`,
                 name: 'DepartmentToDelete',
                 choices: Departments,
