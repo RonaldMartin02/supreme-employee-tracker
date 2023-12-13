@@ -1,4 +1,4 @@
-const db = require('./db');
+const db = require('./db/db');
 async function getRoles() {
   try {
     const results = await db.query('SELECT * FROM roles');
@@ -12,16 +12,14 @@ async function getRoles() {
   }
 }
 
-// Get list of managers
 async function getManagers() {
   try {
-    const results = await db.query('SELECT * FROM employee');
+    
     const managers = results[0].map((employee) => ({
       name: `${employee.first_name} ${employee.last_name}`,
       value: employee.id,
     }));
 
-    // Option for null manager
     managers.unshift({
       name: 'No manager',
       value: null,
@@ -34,7 +32,6 @@ async function getManagers() {
   }
 }
 
-// Get list of employees
 async function getEmployees() {
   try {
     const [results, _] = await db.query('SELECT * FROM employee');
@@ -48,7 +45,6 @@ async function getEmployees() {
   }
 }
 
-// Get list of departments
 async function getDepartments() {
   try {
     const query = 'SELECT * FROM department';
@@ -64,7 +60,6 @@ async function getDepartments() {
   }
 }
 
-// Update Employee Role
 async function updateEmployeeRole(employeeId, newRoleId) {
   try {
     const sql = 'UPDATE employee SET role_id = ? WHERE id = ?';
@@ -75,7 +70,6 @@ async function updateEmployeeRole(employeeId, newRoleId) {
   }
 }
 
-// Update Employee Salary
 async function updateEmployeeSalary(employeeId, newSalary) {
   try {
     const sql = 'UPDATE employee SET salary = ? WHERE id = ?';
@@ -86,7 +80,6 @@ async function updateEmployeeSalary(employeeId, newSalary) {
   }
 }
 
-// Update Employee Department
 async function updateEmployeeDepartment(employeeId, newDepartmentId) {
   try {
     const sql = 'UPDATE employee SET department_id = ? WHERE id = ?';
@@ -97,7 +90,6 @@ async function updateEmployeeDepartment(employeeId, newDepartmentId) {
   }
 }
 
-// Update Employee Manager
 async function updateEmployeeManager(employeeId, newManagerId) {
   try {
     const sql = 'UPDATE employee SET manager_id = ? WHERE id = ?';

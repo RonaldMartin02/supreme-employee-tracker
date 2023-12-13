@@ -1,7 +1,7 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const clc = require("cli-color");
-const db = require('./db');
+const db = require('./db/db');
 const helpers = require('./helpers');
 
 const options = [
@@ -104,13 +104,13 @@ async function viewAllEmployees() {
     SELECT employee.id, 
            CONCAT(employee.first_name, ' ', employee.last_name) AS employee_name, 
            roles.title AS job_title,
-           roles.salary,
+           employee.salary,
            department.names AS department,
            CONCAT(manager.first_name, ' ', manager.last_name) AS manager
            FROM employee
            LEFT JOIN employee manager ON employee.manager_id = manager.id
            INNER JOIN roles ON employee.role_id = roles.id
-           INNER JOIN department ON roles.department_id = department.id`;
+           INNER JOIN department ON employee.department_id = department.id`;
         const [res] = await db.query(query);
         console.table(res);
         init();
@@ -178,6 +178,12 @@ async function addRole() {
 };
 async function addEmployee() {
     try {
+        const results = await db.query('SELECT * FROM roles');
+        results[0].map((role) => ({
+        name: role.title,
+
+        value: role.id,}));
+
         const roles = await helpers.getRoles();
         const managers = await helpers.getManagers();
 
@@ -209,11 +215,14 @@ async function addEmployee() {
         const answers = await inquirer.prompt(questions);
         // Insert the employee into the database
         const sql = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)';
+        // const sql = 'INSERT INTO employee (first_name, last_name, role_id, salary, manager_id, department_id) VALUES (?, ?, ?, ?, )';
         const values = [
             answers.firstNameForNewEmployee,
             answers.lastNameForNewEmployee,
             answers.roleForNewEmployee,
-            answers.managerForNewEmployee,
+            // helpers.updateEmployeeSalary,
+            answers.managerForNewEmployee
+            // helpers.updateEmployeeDepartment
         ];
         await db.query(sql, values);
 
@@ -285,7 +294,6 @@ async function updateEmployee() {
                 await helpers.updateEmployeeDepartment(employeeToUpdate, newDepartmentId);
                 console.log(clc.green('Employee department successfully updated!'));
                 break;
-            // UPDATE EMPLOYEE MANAGER
             case 'Manager':
                 const { newManagerId } = await inquirer.prompt([
                     {
