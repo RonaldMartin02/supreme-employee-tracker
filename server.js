@@ -228,7 +228,6 @@ async function updateEmployee() {
     try {
         const employees = await helpers.getEmployees();
         const roles = await helpers.getRoles();
-        const departments = await helpers.getDepartments();
         const managers = await helpers.getManagers();
 
         const questions = [
