@@ -23,16 +23,3 @@ INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES
 ('Malia', 'Brown', 6, 5),
 ('Sarah', 'Lourd', 7, NULL),
 ('Tom', 'Allen', 8, 7);
-
-UPDATE employee
-SET salary = (
-    SELECT roles.salary
-    FROM roles
-    WHERE roles.id = employee.role_id
-);
-UPDATE employee
-SET department_id = (
-    SELECT roles.department_id
-    FROM roles
-    WHERE roles.id = employee.role_id
-);

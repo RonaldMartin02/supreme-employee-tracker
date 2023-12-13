@@ -14,7 +14,7 @@ async function getRoles() {
 
 async function getManagers() {
   try {
-    
+    const results = await db.query('SELECT * FROM employee');
     const managers = results[0].map((employee) => ({
       name: `${employee.first_name} ${employee.last_name}`,
       value: employee.id,
@@ -70,26 +70,6 @@ async function updateEmployeeRole(employeeId, newRoleId) {
   }
 }
 
-async function updateEmployeeSalary(employeeId, newSalary) {
-  try {
-    const sql = 'UPDATE employee SET salary = ? WHERE id = ?';
-    const values = [newSalary, employeeId];
-    await db.query(sql, values);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-async function updateEmployeeDepartment(employeeId, newDepartmentId) {
-  try {
-    const sql = 'UPDATE employee SET department_id = ? WHERE id = ?';
-    const values = [newDepartmentId, employeeId];
-    await db.query(sql, values);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
 async function updateEmployeeManager(employeeId, newManagerId) {
   try {
     const sql = 'UPDATE employee SET manager_id = ? WHERE id = ?';
@@ -106,7 +86,5 @@ module.exports = {
   getEmployees,
   getDepartments,
   updateEmployeeRole,
-  updateEmployeeSalary,
-  updateEmployeeDepartment,
-  updateEmployeeManager,
+  updateEmployeeManager
 };

@@ -77,7 +77,7 @@ async function viewAllDepartments() {
         console.table(res);
         init();
     } catch (error) {
-        console.error(clc.red("Department table was not found! This error occurred: "+ error));
+        console.error(clc.red("Department table was not found! This error occurred: " + error));
         init();
     }
 };
@@ -94,28 +94,28 @@ async function viewAllRoles() {
         console.table(res);
         init();
     } catch (error) {
-        console.error(clc.red("Roles table was not found! This error occurred: "+ error));
+        console.error(clc.red("Roles table was not found! This error occurred: " + error));
         init();
     }
 };
 async function viewAllEmployees() {
     try {
-        const query = `
-    SELECT employee.id, 
-           CONCAT(employee.first_name, ' ', employee.last_name) AS employee_name, 
-           roles.title AS job_title,
-           employee.salary,
-           department.names AS department,
-           CONCAT(manager.first_name, ' ', manager.last_name) AS manager
-           FROM employee
-           LEFT JOIN employee manager ON employee.manager_id = manager.id
-           INNER JOIN roles ON employee.role_id = roles.id
-           INNER JOIN department ON employee.department_id = department.id`;
+            const query = `
+        SELECT employee.id, 
+               CONCAT(employee.first_name, ' ', employee.last_name) AS employee_name, 
+               roles.title AS job_title,
+               roles.salary,
+               department.names AS department,
+               CONCAT(manager.first_name, ' ', manager.last_name) AS manager
+               FROM employee
+               LEFT JOIN employee manager ON employee.manager_id = manager.id
+               INNER JOIN roles ON employee.role_id = roles.id
+               INNER JOIN department ON roles.department_id = department.id`;
         const [res] = await db.query(query);
         console.table(res);
         init();
     } catch (error) {
-        console.error(clc.red("Employee table was not found! This error occurred: "+ error));
+        console.error(clc.red("Employee table was not found! This error occurred: " + error));
         init();
     }
 };
@@ -139,7 +139,7 @@ async function addDepartment() {
         console.log(clc.green("Department successfully added!"));
         init();
     } catch (error) {
-        console.error(clc.red("Department wasn't added! This error occurred: "+ error));
+        console.error(clc.red("Department wasn't added! This error occurred: " + error));
         init();
     }
 };
@@ -172,18 +172,12 @@ async function addRole() {
         console.log(clc.green("Role successfully added!"));
         init();
     } catch (error) {
-        console.error(clc.red("Role wasn't added! This error occurred: "+ error));
+        console.error(clc.red("Role wasn't added! This error occurred: " + error));
         init();
     }
 };
 async function addEmployee() {
     try {
-        const results = await db.query('SELECT * FROM roles');
-        results[0].map((role) => ({
-        name: role.title,
-
-        value: role.id,}));
-
         const roles = await helpers.getRoles();
         const managers = await helpers.getManagers();
 
@@ -214,22 +208,18 @@ async function addEmployee() {
 
         const answers = await inquirer.prompt(questions);
         // Insert the employee into the database
-        const sql = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)';
-        // const sql = 'INSERT INTO employee (first_name, last_name, role_id, salary, manager_id, department_id) VALUES (?, ?, ?, ?, )';
+        var sql = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?) ';
         const values = [
             answers.firstNameForNewEmployee,
             answers.lastNameForNewEmployee,
             answers.roleForNewEmployee,
-            // helpers.updateEmployeeSalary,
-            answers.managerForNewEmployee
-            // helpers.updateEmployeeDepartment
+            answers.managerForNewEmployee,
         ];
         await db.query(sql, values);
-
         console.log(clc.green("Employee successfully added!"));
         init();
     } catch (error) {
-        console.error(clc.red("Employee wasn't added! This error occurred: "+ error));
+        console.error(clc.red("Employee wasn't added! This error occurred: " + error));
         init();
     }
 };
@@ -252,7 +242,7 @@ async function updateEmployee() {
                 type: 'list',
                 message: 'Select the information to update:',
                 name: 'infoToUpdate',
-                choices: ['Role', 'Salary', 'Department', 'Manager']
+                choices: ['Role', 'Manager']
             }
         ];
 
@@ -270,29 +260,6 @@ async function updateEmployee() {
                 ]);
                 await helpers.updateEmployeeRole(employeeToUpdate, newRoleId);
                 console.log(clc.green('Employee role successfully updated!'));
-                break;
-            case 'Salary':
-                const { newSalary } = await inquirer.prompt([
-                    {
-                        type: 'input',
-                        message: 'Enter the employees new salary:',
-                        name: 'newSalary'
-                    }
-                ]);
-                await helpers.updateEmployeeSalary(employeeToUpdate, newSalary);
-                console.log(clc.green('Employee salary successfully updated!'));
-                break;
-            case 'Department':
-                const { newDepartmentId } = await inquirer.prompt([
-                    {
-                        type: 'list',
-                        message: 'Select the employees new department:',
-                        name: 'newDepartmentId',
-                        choices: departments
-                    }
-                ]);
-                await helpers.updateEmployeeDepartment(employeeToUpdate, newDepartmentId);
-                console.log(clc.green('Employee department successfully updated!'));
                 break;
             case 'Manager':
                 const { newManagerId } = await inquirer.prompt([

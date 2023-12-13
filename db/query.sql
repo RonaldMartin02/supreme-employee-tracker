@@ -11,4 +11,4 @@ SELECT
 FROM employee
 LEFT JOIN employee manager ON employee.manager_id = manager.id
 INNER JOIN roles ON employee.role_id = roles.id
-INNER JOIN department ON employee.department_id = department.id;
+INNER JOIN department ON roles.department_id = department.id;
